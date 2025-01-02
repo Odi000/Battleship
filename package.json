@@ -1,0 +1,17 @@
+{
+  "name": "battleship",
+  "version": "1.0.0",
+  "description": "Battleship is a strategic guessing game where players try to sink each other's fleet, developed with rigorous testing using Jest to ensure gameplay accuracy and reliability.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0"
+  }
+}
