@@ -27,20 +27,59 @@ test("Board should have 100 coordinates", () => {
 test("Place ship in specific coordinates", () => {
     const gameBoard = new game.GameBoard();
     const liburna = new game.Ship(3)
-    
-    expect(gameBoard.placeShip(liburna, -1, 0, "vertical")).toBe(false);
-    expect(gameBoard.placeShip(liburna, 0, 0, "vertical")).toEqual([[0, 0], [0, 1], [0, 2]]);
+
+    expect(gameBoard.placeShip(liburna, -1, 0)).toBe(false);
+    expect(gameBoard.placeShip(liburna, 0, 0)).toEqual([[0, 0], [0, 1], [0, 2]]);
     expect(gameBoard.placeShip(liburna, 0, 0, "horizontal")).toEqual([[0, 0], [1, 0], [2, 0]]);
     expect(gameBoard.placeShip(liburna, 7, 8, "horizontal")).toEqual([[7, 8], [8, 8], [9, 8]]);
-    expect(gameBoard.placeShip(liburna, 7, 8, "vertical")).toBe(false);
+    expect(gameBoard.placeShip(liburna, 7, 8)).toBe(false);
+});
+
+test("Find if ship is already on board", () => {
+    const gameBoard = new game.GameBoard();
+    const liburna = new game.Ship(3);
+    expect(gameBoard.isShipOnBoard(liburna)).toBe(false);
+    gameBoard.placeShip(liburna, 6, 7)
+    expect(gameBoard.isShipOnBoard(liburna)).toBe(true)
+});
+
+test("Remove Ship",()=>{
+    const gameBoard = new game.GameBoard();
+    const liburna = new game.Ship(3)
+
+    gameBoard.placeShip(liburna, 0, 0);
+    expect(gameBoard.board[0][2]).toBe(liburna);
+
+    gameBoard.removeShip(liburna);
+    expect(gameBoard.board[0][2]).toBe(null);
+})
+
+test("Ship cannot be placed two times in the borad", () => {
+    const gameBoard = new game.GameBoard();
+    const liburna = new game.Ship(3)
+
+    gameBoard.placeShip(liburna, 0, 0);
+    expect(gameBoard.board[0][2]).toBe(liburna);
+
+    gameBoard.placeShip(liburna, 7, 8, "horizontal");
+    expect(gameBoard.board[78][2]).toBe(liburna);
+    expect(gameBoard.board[0][2]).toBe(null);
 });
 
 test("determines whether or not the attack hit a ship or not", () => {
     const gameBoard = new game.GameBoard();
     const liburna = new game.Ship(3)
 
-    expect(gameBoard.receiveAttack(0,0)).toBe(true);
-    expect(gameBoard.receiveAttack(5,5)).toBe(false);
+    gameBoard.placeShip(liburna,5,5,"horizontal")
+
+    expect(gameBoard.board[65][3]).toBe(false);
+    expect(gameBoard.board[0][3]).toBe(false);
+
+    expect(gameBoard.receiveAttack(0,0)).toBe("Missed Shot");
+    expect(gameBoard.receiveAttack(6,5)).toBe("Enemy Shot");
     expect(liburna.hitsTaken).toBe(1);
-    expect(gameBoard.board[55]).toBe("missed-hit");
+    expect(gameBoard.board[65][3]).toBe(true);
+    expect(gameBoard.board[0][3]).toBe(true);
+
+    expect(gameBoard.receiveAttack(0,0)).toBe("Already been shot");
 })
