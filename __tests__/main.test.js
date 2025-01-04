@@ -43,7 +43,7 @@ test("Find if ship is already on board", () => {
     expect(gameBoard.isShipOnBoard(liburna)).toBe(true)
 });
 
-test("Remove Ship",()=>{
+test("Remove Ship", () => {
     const gameBoard = new game.GameBoard();
     const liburna = new game.Ship(3)
 
@@ -70,16 +70,51 @@ test("determines whether or not the attack hit a ship or not", () => {
     const gameBoard = new game.GameBoard();
     const liburna = new game.Ship(3)
 
-    gameBoard.placeShip(liburna,5,5,"horizontal")
+    gameBoard.placeShip(liburna, 5, 5, "horizontal")
 
     expect(gameBoard.board[65][3]).toBe(false);
     expect(gameBoard.board[0][3]).toBe(false);
 
-    expect(gameBoard.receiveAttack(0,0)).toBe("Missed Shot");
-    expect(gameBoard.receiveAttack(6,5)).toBe("Enemy Shot");
+    expect(gameBoard.receiveAttack(0, 0)).toBe("Missed Shot");
+    expect(gameBoard.receiveAttack(6, 5)).toBe("Enemy Shot");
     expect(liburna.hitsTaken).toBe(1);
     expect(gameBoard.board[65][3]).toBe(true);
     expect(gameBoard.board[0][3]).toBe(true);
 
-    expect(gameBoard.receiveAttack(0,0)).toBe("Already been shot");
-})
+    expect(gameBoard.receiveAttack(0, 0)).toBe("Already been shot");
+});
+
+test("Report whether or not all of their ships have been sunk", () => {
+    const gameBoard = new game.GameBoard();
+    const liburna = new game.Ship(3)
+    const cajkovski = new game.Ship(3)
+    const kafka = new game.Ship(3)
+
+    expect(gameBoard.allShipsDown(liburna,cajkovski,kafka)).toBe(false);
+
+    //pleace three ships on board
+    gameBoard.placeShip(liburna, 0, 0);
+    gameBoard.placeShip(cajkovski, 2, 0);
+    gameBoard.placeShip(kafka, 4, 0);
+
+    //attack liburna
+    gameBoard.receiveAttack(0, 0)
+    gameBoard.receiveAttack(0, 1)
+    gameBoard.receiveAttack(0, 2)
+
+    //attack cajkovski
+    gameBoard.receiveAttack(2, 0)
+    gameBoard.receiveAttack(2, 1)
+    gameBoard.receiveAttack(2, 2)
+
+    //attack kafka only 2/3
+    gameBoard.receiveAttack(4, 0)
+    gameBoard.receiveAttack(4, 1)
+
+    expect(gameBoard.allShipsDown(liburna,cajkovski,kafka)).toBe(false);
+
+    //finish kafka
+    gameBoard.receiveAttack(4, 2);
+
+    expect(gameBoard.allShipsDown(liburna,cajkovski,kafka)).toBe(true);
+});

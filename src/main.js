@@ -4,17 +4,17 @@ class Ship {
         this.hitsTaken = 0;
         this.sunk = false;
         this.coordinates = null;
-    }
+    };
 
     hit() {
         this.hitsTaken++;
-    }
+    };
 
     isSunk() {
         let result = this.hitsTaken >= this.length ? true : false;
         return result;
-    }
-}
+    };
+};
 
 class GameBoard {
     constructor() {
@@ -32,7 +32,7 @@ class GameBoard {
         return this.board.find(location => {
             if (coords[0] === location[0] && coords[1] === location[1]) return location;
         })
-    }
+    };
 
     placeShip(ship, x, y, direction) {
         if (!(x >= 0 && x <= 9) || !(y >= 0 && y <= 9)) return false;
@@ -77,7 +77,7 @@ class GameBoard {
             const location = this.findCoords(coordinate);
 
             location[2] = null;
-        })
+        });
     };
 
     receiveAttack(x, y) {
@@ -91,6 +91,17 @@ class GameBoard {
             ship.hit();
             return "Enemy Shot";
         } else return "Missed Shot";
+    };
+
+    allShipsDown(...ships) {
+        let sunkenShips = 0;
+        // console.log(ships)
+        for (let ship of ships) {
+            if (ship.isSunk()) sunkenShips++;
+        };
+
+        if (sunkenShips === ships.length) return true;
+        else return false;
     }
 }
 
