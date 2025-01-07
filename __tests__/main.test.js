@@ -1,4 +1,4 @@
-const game = require("../src/main");
+const game = require("../src/logic");
 
 test("Increases the number of 'hits' in your ship", () => {
     const liburna = new game.Ship(5)
