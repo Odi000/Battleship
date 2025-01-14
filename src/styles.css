@@ -1,0 +1,80 @@
+@font-face {
+    font-family: "mini-pixel";
+    src: url(./fonts/mini-pixel-7.regular.woff2),
+        url(./fonts/mini-pixel-7.regular.woff),
+        url(./fonts/mini_pixel-7.ttf);
+    font-weight: normal;
+    font-style: normal;
+}
+
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'mini-pixel', sans-serif;
+}
+
+:root {
+    font-size: 10px;
+    --bkg-clr: rgb(30, 30, 30);
+    --main-txt-clr: #cac7ff;
+}
+
+body {
+    background-color: var(--bkg-clr);
+}
+
+#game {
+    position: relative;
+    height: 100vh;
+}
+
+/*Play button*/
+.play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8rem;
+    background-color: #4d4637;
+    color: #b99400;
+    padding: 0.2rem 1.6rem;
+    border-top: 0.4rem solid rgba(255, 255, 255, 0.3);
+    border-right: 0.4rem solid rgba(255, 255, 255, 0.5);
+    border-bottom: 0.4rem solid rgba(0, 0, 0, 0.4);
+    border-left: 0.4rem solid rgba(0, 0, 0, 0.5);
+    transition: border 120ms, opacity 120ms;
+}
+
+.play:active {
+    border-top: 0.4rem solid rgba(0, 0, 0, 0.4);
+    border-right: 0.4rem solid rgba(0, 0, 0, 0.5);
+    border-bottom: 0.4rem solid rgba(255, 255, 255, 0.3);
+    border-left: 0.4rem solid rgba(255, 255, 255, 0.5);
+}
+
+.dissapear {
+    opacity: 0;
+}
+
+/* GameBoard */
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(10, 3.2rem);
+    grid-template-rows: repeat(10, 3.2rem);
+    gap: 0.4rem;
+    width: fit-content;
+}
+
+
+.square {
+    background-color: #006182;
+    transition: background 120ms;
+}
+
+.square:hover {
+    background-color: #00465D;
+}

@@ -1,9 +1,3 @@
-// export {
-//     Ship,
-//     GameBoard,
-//     Player
-// }
-
 class Ship {
     constructor(length) {
         this.length = length;
