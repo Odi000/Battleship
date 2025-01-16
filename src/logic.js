@@ -62,7 +62,6 @@ class GameBoard {
 
         ship.coordinates = coordinates;
         return coordinates;
-
     };
 
     isShipOnBoard(ship) {
