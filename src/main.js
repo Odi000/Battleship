@@ -25,17 +25,41 @@ function gamePlay() {
 
     const board1 = [...document.querySelectorAll(".board")[0].childNodes];
     const board2 = [...document.querySelectorAll(".board")[1].childNodes];
-    console.log(board2.find(node => node.dataset.coords == 12))
-
-    shipObjects.forEach(ship => gameBoard.placeShip(ship, 1, 1))
 
     for (let i = 0; i < shipObjects.length; i++) {
-        gameBoard.placeShip(shipObjects[i], i * 2, 1)
-        shipObjects[i].coordinates.forEach
+        // const coords = gameBoard.placeShip(shipObjects[i], i * 2, 1);
+        const coords = placeShipsRandomly(shipObjects[i]);
+        drawShips(coords);
     }
 
-    for (let i = 0; i < shipObjects.length; i++) {
-        console.log(shipObjects[i].coordinates)
+    function placeShipsRandomly(ship){
+        let x = Math.floor(Math.random()*10);
+        let y = Math.floor(Math.random()*10);
+        let direction = false;
+
+        if(5 <= (Math.random()*10+1)){
+            direction = "horizontal"
+        }
+
+        const coords = gameBoard.placeShip(ship, x, y, direction);
+
+        if(!coords)  return placeShipsRandomly(ship);
+        return coords;
+    }
+
+    function drawShips(coords) {
+        const squares = [];
+
+        coords.forEach(coord => {
+            coord = coord.join("");
+            board1.find(square => {
+                if (square.dataset.coords === coord) {
+                    squares.push(square);
+                }
+            })
+        })
+
+        squares.forEach(square => square.classList.toggle("ship"))
     }
 
     function buildShips() {
@@ -103,7 +127,7 @@ function gamePlay() {
                 playButton.classList.add("dissapear");
             }
             if (e.propertyName === "opacity") {
-                playButton.remove();
+                gameDiv.innerHTML = "";
                 gameDiv.appendChild(buildStage());
                 gameDiv.appendChild(buildStage());
             }

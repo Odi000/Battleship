@@ -120,3 +120,7 @@ div+.container {
 .square:hover {
     background-color: #00465D;
 }
+
+.ship {
+    background-color: #007d6b;
+}
