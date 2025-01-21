@@ -143,8 +143,9 @@ class GameBoard {
 };
 
 class Player {
-    constructor(type) {
-        this.type = type;
+    constructor(turn) {
+        this.type = null;
+        this.turn = turn
         this.board = new GameBoard();
     }
 }

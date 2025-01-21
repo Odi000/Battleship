@@ -9,7 +9,10 @@ import "./styles.css";
 gamePlay();
 function gamePlay() {
     const gameBoard = new GameBoard();
-    const shipObjects = buildShips();
+    const player1 = new Player("first");
+    const player2 = new Player("second");
+    const shipObjects1 = buildShipObjects(5);
+    const shipObjects2 = buildShipObjects(5);
 
 
 
@@ -17,42 +20,47 @@ function gamePlay() {
     gameDiv.innerHTML = "";
 
     const playButton = createPlayButton();
+    gameDiv.appendChild(playButton);
 
-    // gameDiv.appendChild(playButton);
+    // selectMode();
 
-    gameDiv.appendChild(buildStage());
-    gameDiv.appendChild(buildStage());
+    function startRound(nr) {
+        let player, enemyPlayer;
+        if (nr % 2 === 0) player = player1, enemyPlayer = player2;
+        else player = player2, enemyPlayer = player1;
+        nr++;
 
-    const board1 = [...document.querySelectorAll(".board")[0].childNodes];
-    const board2 = [...document.querySelectorAll(".board")[1].childNodes];
+        const container1 = document.getElementById("first");
+        const container2 = document.getElementById("second");
 
-    for (let i = 0; i < shipObjects.length; i++) {
-        // const coords = gameBoard.placeShip(shipObjects[i], i * 2, 1);
-        const coords = placeShipsRandomly(shipObjects[i]);
-        drawShips(coords);
-    }
-
-    function placeShipsRandomly(ship){
-        let x = Math.floor(Math.random()*10);
-        let y = Math.floor(Math.random()*10);
-        let direction = false;
-
-        if(5 <= (Math.random()*10+1)){
-            direction = "horizontal"
+        if (enemyPlayer.turn === "first") {
+            container1.classList.add("hide");
+            container2.classList.remove("hide");
+        } else {
+            container2.classList.add("hide");
+            container1.classList.remove("hide");
         }
 
-        const coords = gameBoard.placeShip(ship, x, y, direction);
+        const enemyBoard =[...gameDiv.querySelectorAll(".hide .square")];
 
-        if(!coords)  return placeShipsRandomly(ship);
-        return coords;
+        enemyBoard.forEach(square => {
+            square.onclick = (e)=>{
+                console.log("Shot");
+                console.log(e.target);
+            }
+        })
+        console.log(enemyBoard)
+
+        // after shot
+        if (enemyPlayer.board.allShipsDown()) return "finito";
     }
 
-    function drawShips(coords) {
+    function drawShips(coords, board) {
         const squares = [];
 
         coords.forEach(coord => {
             coord = coord.join("");
-            board1.find(square => {
+            board.find(square => {
                 if (square.dataset.coords === coord) {
                     squares.push(square);
                 }
@@ -60,44 +68,6 @@ function gamePlay() {
         })
 
         squares.forEach(square => square.classList.toggle("ship"))
-    }
-
-    function buildShips() {
-        const ships = [];
-        for (let i = 0; i < 5; i++) {
-            let ship = null;
-            if (i >= 2) ship = new Ship(i + 1);
-            else ship = new Ship(i + 2);
-            ships.push(ship);
-        }
-        return ships;
-    }
-
-    function buildStage() {
-        const container = document.createElement("div");
-        const shipStatusCont = document.createElement("div");
-        const ships = [];
-        for (let i = 0; i < shipObjects.length; i++) {
-            const ship = document.createElement("div");
-            ship.classList.add(`S${i + 1}`);
-
-            for (let j = 0; j < shipObjects[i].length; j++) {
-                const bodyPart = document.createElement("div");
-                ship.appendChild(bodyPart);
-            }
-
-            ships.push(ship);
-        }
-
-        container.classList.add("container");
-        shipStatusCont.classList.add("ships");
-
-        ships.forEach(ship => shipStatusCont.appendChild(ship));
-
-        container.appendChild(shipStatusCont);
-        container.appendChild(drawBoard());
-
-        return container;
     }
 
     function drawBoard() {
@@ -117,6 +87,112 @@ function gamePlay() {
         return board;
     }
 
+    function placeShipsRandomly(ship, logicBoard) {
+        let x = Math.floor(Math.random() * 10);
+        let y = Math.floor(Math.random() * 10);
+        let direction = false;
+
+        if (5 <= (Math.random() * 10 + 1)) {
+            direction = "horizontal"
+        }
+
+        const coords = logicBoard.placeShip(ship, x, y, direction);
+
+        if (!coords) return placeShipsRandomly(ship, logicBoard);
+        return coords;
+    }
+
+    function buildStage(player) {
+        const container = document.createElement("div");
+        const shipStatusCont = document.createElement("div");
+        const ships = [];
+        for (let i = 0; i < shipObjects1.length; i++) {
+            const ship = document.createElement("div");
+            ship.classList.add(`S${i + 1}`);
+
+            for (let j = 0; j < shipObjects1[i].length; j++) {
+                const bodyPart = document.createElement("div");
+                ship.appendChild(bodyPart);
+            }
+
+            ships.push(ship);
+        }
+
+        if (player.turn === "first") container.id = "first";
+        else container.id = "second";
+        container.classList.add("container");
+        shipStatusCont.classList.add("ships");
+
+        ships.forEach(ship => shipStatusCont.appendChild(ship));
+
+        container.appendChild(shipStatusCont);
+        container.appendChild(drawBoard());
+
+        return container;
+    }
+
+    function startGame() {
+        gameDiv.innerHTML = "";
+        player1.type = "human";
+        player2.type = "human";
+
+        gameDiv.appendChild(buildStage(player1));
+        gameDiv.appendChild(buildStage(player2));
+
+        const dom_board1 = [...document.querySelectorAll(".board")[0].childNodes];
+        const dom_board2 = [...document.querySelectorAll(".board")[1].childNodes];
+
+        for (let i = 0; i < shipObjects1.length; i++) {
+            const coords = placeShipsRandomly(shipObjects1[i], player1.board);
+            drawShips(coords, dom_board1);
+        }
+
+        for (let i = 0; i < shipObjects2.length; i++) {
+            const coords = placeShipsRandomly(shipObjects2[i], player2.board);
+            drawShips(coords, dom_board2);
+        }
+
+        // raundi pl1
+        // te tana kutit e bordeve duhet tken eventlisenera
+        // eventlistenerat punojn vetem nqs a raundi i playerit kundershtar
+        startRound(0);
+    }
+
+    function selectMode() {
+        const containerDiv = document.createElement("div");
+        const heading = document.createElement("h1");
+        const _2player = document.createElement("button");
+        const _vsCPU = document.createElement("button");
+
+        heading.textContent = "Select mode:";
+        _2player.textContent = "2 Player";
+        _vsCPU.textContent = "CPU";
+
+        containerDiv.classList.add("select-mode");
+
+        _2player.ontransitionend = (e) => {
+            if (e.propertyName === "border-bottom-color") {
+                _2player.classList.add("dissapear");
+                containerDiv.classList.add("dissapear");
+            }
+            if (e.propertyName === "opacity") {
+                if (e.target.textContent === "2 Player") {
+                    startGame()
+                } else {
+                    player1.type = "human";
+                    player2.type = "computer";
+                    gameDiv.innerHTML = "";
+                };
+            }
+        }
+
+        containerDiv.appendChild(heading);
+        containerDiv.appendChild(_2player);
+        containerDiv.appendChild(_vsCPU);
+
+        return containerDiv;
+    }
+
     function createPlayButton() {
         const playButton = document.createElement("button");
         playButton.classList.add("play");
@@ -128,10 +204,20 @@ function gamePlay() {
             }
             if (e.propertyName === "opacity") {
                 gameDiv.innerHTML = "";
-                gameDiv.appendChild(buildStage());
-                gameDiv.appendChild(buildStage());
+                gameDiv.appendChild(selectMode());
             }
         }
         return playButton;
+    }
+
+    function buildShipObjects(nr) {
+        const ships = [];
+        for (let i = 0; i < nr; i++) {
+            let ship = null;
+            if (i >= 2) ship = new Ship(i + 1);
+            else ship = new Ship(i + 2);
+            ships.push(ship);
+        }
+        return ships;
     }
 }
