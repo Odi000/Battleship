@@ -3,8 +3,9 @@ import {
     GameBoard,
     Player
 } from "./logic";
-
 import "./styles.css";
+import crackImg from "./images/cracked.png"
+import shotImg from "./images/shot.png"
 
 gamePlay();
 function gamePlay() {
@@ -41,15 +42,51 @@ function gamePlay() {
             container1.classList.remove("hide");
         }
 
-        const enemyBoard =[...gameDiv.querySelectorAll(".hide .square")];
+        const enemyBoard = [...gameDiv.querySelectorAll(".hide .square")];
+        const enemyBoard1 = gameDiv.querySelector(".hide .board");
 
-        enemyBoard.forEach(square => {
-            square.onclick = (e)=>{
-                console.log("Shot");
-                console.log(e.target);
+        enemyBoard1.addEventListener("click", clicked)
+
+        function clicked(e) {
+            if(e.target === e.currentTarget) return;
+            const square = e.target.closest(".square");
+            const coodrs = square.dataset.coords.split("").map(el => Number(el));
+            const resultMsg = enemyPlayer.board.receiveAttack(...coodrs)
+            
+            if(resultMsg === "Already been shot") return;
+            else if(resultMsg === "Enemy Shot"){
+                const shotShipImg = document.createElement("img");
+                shotShipImg.src = crackImg;
+                shotShipImg.style.transform = `rotate(${360 / Math.floor(Math.random() * 4 + 1)}deg)`;
+                square.appendChild(shotShipImg);
+            } else {
+                // code for missed shot
             }
-        })
-        console.log(enemyBoard)
+
+            enemyBoard1.removeEventListener("click", clicked);
+            startRound(nr);
+        }
+
+
+        // enemyBoard.forEach(square => {
+        //     square.onclick = (e)=>{ 
+        //         console.log(e)
+        //         console.log(e.target.dataset)
+        //         console.log(e.target.dataset.coords)
+        //         const coodrs = e.target.dataset.coords.split("").map(el => Number(el));
+        //         // console.log(coodrs)
+        //         console.log(enemyPlayer.board.receiveAttack(...coodrs));
+        //         const shotShipImg = document.createElement("img");
+
+        //         shotShipImg.src = crackImg;
+        //         shotShipImg.style.transform = `rotate(${360/Math.floor(Math.random()*4+1)}deg)`;
+        //         e.target.appendChild(shotShipImg);
+
+        //         enemyBoard.forEach(square => square.onclick = null);
+
+        //         startRound(nr);
+        //     }
+        // })
 
         // after shot
         if (enemyPlayer.board.allShipsDown()) return "finito";
@@ -152,9 +189,6 @@ function gamePlay() {
             drawShips(coords, dom_board2);
         }
 
-        // raundi pl1
-        // te tana kutit e bordeve duhet tken eventlisenera
-        // eventlistenerat punojn vetem nqs a raundi i playerit kundershtar
         startRound(0);
     }
 

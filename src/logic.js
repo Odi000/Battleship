@@ -124,11 +124,15 @@ class GameBoard {
         if (location[3]) return "Already been shot";
         location[3] = true;
 
-        if (location[2]) {
+        if (isObject(location[2])) {
             const ship = location[2];
             ship.hit();
             return "Enemy Shot";
         } else return "Missed Shot";
+
+        function isObject(data){
+            return data !== null && !Array.isArray(data) && typeof(data) === "object";
+        }
     };
 
     allShipsDown(...ships) {

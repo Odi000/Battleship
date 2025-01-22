@@ -154,3 +154,8 @@ div+.container {
 .container:not(.hide) .ship:hover {
     background-color: #005B4E;
 }
+
+.square 
+img {
+    width: 100%;
+}
