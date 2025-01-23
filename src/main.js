@@ -48,19 +48,24 @@ function gamePlay() {
         enemyBoard1.addEventListener("click", clicked)
 
         function clicked(e) {
-            if(e.target === e.currentTarget) return;
+            if (e.target === e.currentTarget) return;
             const square = e.target.closest(".square");
             const coodrs = square.dataset.coords.split("").map(el => Number(el));
             const resultMsg = enemyPlayer.board.receiveAttack(...coodrs)
-            
-            if(resultMsg === "Already been shot") return;
-            else if(resultMsg === "Enemy Shot"){
+
+            if (resultMsg === "Already been shot") return;
+            else if (resultMsg === "Enemy Shot") {
                 const shotShipImg = document.createElement("img");
                 shotShipImg.src = crackImg;
                 shotShipImg.style.transform = `rotate(${360 / Math.floor(Math.random() * 4 + 1)}deg)`;
+
                 square.appendChild(shotShipImg);
+                square.classList.add("shot");
             } else {
-                // code for missed shot
+                const hole = document.createElement("div");
+                square.appendChild(hole);
+
+                setTimeout(() => hole.classList.add("explode"),10);
             }
 
             enemyBoard1.removeEventListener("click", clicked);

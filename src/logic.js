@@ -3,7 +3,7 @@ class Ship {
         this.length = length;
         this.hitsTaken = 0;
         this.sunk = false;
-        this.coordinates = null;
+        this.coordinates = [];
         this.adjacentLocations = null;
     };
 
@@ -62,14 +62,16 @@ class GameBoard {
         for (const coordinate of coordinates) {
             const location = this.findCoords(coordinate);
             if (location[2]) {
+                // If a part of the ship happens to be adjacent to another delete ship
                 if (this.isShipOnBoard(ship)) this.removeShip(ship);
                 return false;
             }
             location[2] = ship;
+            ship.coordinates.push(coordinate);
         }
 
-        
-        ship.coordinates = coordinates;
+
+        // ship.coordinates = coordinates;
         ship.adjacentLocations = this.occupyAdjacentCoords(coordinates);
         return coordinates;
     };
@@ -88,7 +90,7 @@ class GameBoard {
             for (const coord of adjacentCoords) {
                 const location = this.findCoords(coord);
                 if (!location) continue;
-                if(location[2]) continue;
+                if (location[2]) continue;
                 location[2] = true;
                 adjacentLocations.push(location);
             };
@@ -103,19 +105,22 @@ class GameBoard {
     };
 
     removeShip(ship) {
-        if (!ship.coordinates) return;
+        if (!ship.coordinates.length) return;
 
         ship.coordinates.forEach(coordinate => {
             const location = this.findCoords(coordinate);
             location[2] = null;
         });
 
-        console.log(ship)
-
-        ship.adjacentLocations.forEach(coordinate => {
-            const location = this.findCoords(coordinate);
-            location[2] = null;
-        })
+        // If full ship is on board
+        // It will have adjacent coords
+        // Only then continue to delete adjacent coords
+        if (ship.length === ship.coordinates.length) {
+            ship.adjacentLocations.forEach(coordinate => {
+                const location = this.findCoords(coordinate);
+                location[2] = null;
+            })
+        }
     };
 
     receiveAttack(x, y) {
@@ -130,8 +135,8 @@ class GameBoard {
             return "Enemy Shot";
         } else return "Missed Shot";
 
-        function isObject(data){
-            return data !== null && !Array.isArray(data) && typeof(data) === "object";
+        function isObject(data) {
+            return data !== null && !Array.isArray(data) && typeof (data) === "object";
         }
     };
 
