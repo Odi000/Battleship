@@ -130,6 +130,10 @@ div+.container {
     height: 1.2rem;
 }
 
+.sunk > div {
+    background-color: #8B0000;
+}
+
 /*Board*/
 
 .board {

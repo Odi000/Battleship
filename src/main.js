@@ -51,21 +51,38 @@ function gamePlay() {
             if (e.target === e.currentTarget) return;
             const square = e.target.closest(".square");
             const coodrs = square.dataset.coords.split("").map(el => Number(el));
-            const resultMsg = enemyPlayer.board.receiveAttack(...coodrs)
+            const attackAnswer = enemyPlayer.board.receiveAttack(...coodrs)
 
-            if (resultMsg === "Already been shot") return;
-            else if (typeof(resultMsg) === "object") {
+            if (attackAnswer === "Already been shot") return;
+            else if (typeof (attackAnswer) === "object") {
                 const shotShipImg = document.createElement("img");
                 shotShipImg.src = crackImg;
                 shotShipImg.style.transform = `rotate(${360 / Math.floor(Math.random() * 4 + 1)}deg)`;
 
                 square.appendChild(shotShipImg);
                 square.classList.add("shot");
+
+                // Update ship status if ship is sunk;
+                if (attackAnswer.isSunk()) {
+                    const shipLength = attackAnswer.length;
+                    let shipNr;
+                    if (shipLength === 5) shipNr = 5;
+                    else if (shipLength === 4) shipNr = 4;
+                    else if (shipLength === 3) {
+                        shipNr = 2;
+                        if (document.querySelector(`.hide .S${shipNr}.sunk`)) shipNr++;
+                    }
+                    else shipNr = 1;
+                    const shipStatus = document.querySelector(`.hide .S${shipNr}`);
+                    console.log(shipStatus);
+                    console.log(attackAnswer.length)
+                    shipStatus.classList.add("sunk");
+                }
             } else {
                 const hole = document.createElement("div");
                 square.appendChild(hole);
 
-                setTimeout(() => hole.classList.add("explode"),5);
+                setTimeout(() => hole.classList.add("explode"), 5);
             }
 
             enemyBoard1.removeEventListener("click", clicked);
