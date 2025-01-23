@@ -54,7 +54,7 @@ function gamePlay() {
             const resultMsg = enemyPlayer.board.receiveAttack(...coodrs)
 
             if (resultMsg === "Already been shot") return;
-            else if (resultMsg === "Enemy Shot") {
+            else if (typeof(resultMsg) === "object") {
                 const shotShipImg = document.createElement("img");
                 shotShipImg.src = crackImg;
                 shotShipImg.style.transform = `rotate(${360 / Math.floor(Math.random() * 4 + 1)}deg)`;
@@ -65,7 +65,7 @@ function gamePlay() {
                 const hole = document.createElement("div");
                 square.appendChild(hole);
 
-                setTimeout(() => hole.classList.add("explode"),10);
+                setTimeout(() => hole.classList.add("explode"),5);
             }
 
             enemyBoard1.removeEventListener("click", clicked);

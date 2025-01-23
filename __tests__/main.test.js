@@ -90,7 +90,7 @@ test("determines whether or not the attack hit a ship or not", () => {
     expect(gameBoard.board[0][3]).toBe(false);
 
     expect(gameBoard.receiveAttack(0, 0)).toBe("Missed Shot");
-    expect(gameBoard.receiveAttack(6, 5)).toBe("Enemy Shot");
+    expect(typeof(gameBoard.receiveAttack(6, 5)) === "object").toBe(true);
     expect(liburna.hitsTaken).toBe(1);
     expect(gameBoard.board[65][3]).toBe(true);
     expect(gameBoard.board[0][3]).toBe(true);

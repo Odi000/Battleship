@@ -43,6 +43,7 @@ class GameBoard {
         if (!(x >= 0 && x <= 9) || !(y >= 0 && y <= 9)) return false;
         //check if ship exits in the board and if yes remove it
         if (this.isShipOnBoard(ship)) this.removeShip(ship);
+        ship.coordinates = [];
         //---//
 
         const coordinates = [];
@@ -116,6 +117,7 @@ class GameBoard {
         // It will have adjacent coords
         // Only then continue to delete adjacent coords
         if (ship.length === ship.coordinates.length) {
+            console.log(ship)
             ship.adjacentLocations.forEach(coordinate => {
                 const location = this.findCoords(coordinate);
                 location[2] = null;
@@ -132,7 +134,7 @@ class GameBoard {
         if (isObject(location[2])) {
             const ship = location[2];
             ship.hit();
-            return "Enemy Shot";
+            return ship;
         } else return "Missed Shot";
 
         function isObject(data) {
