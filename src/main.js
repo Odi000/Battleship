@@ -5,17 +5,16 @@ import {
 } from "./logic";
 import "./styles.css";
 import crackImg from "./images/cracked.png"
-import shotImg from "./images/shot.png"
 
 gamePlay();
 function gamePlay() {
     const gameBoard = new GameBoard();
-    const player1 = new Player("first");
-    const player2 = new Player("second");
-    const shipObjects1 = buildShipObjects(5);
-    const shipObjects2 = buildShipObjects(5);
+    const p1 = new Player("first");
+    const p2 = new Player("second");
+    const nrOfShips = 5;
 
-
+    p1.fleet = buildShipObjects(nrOfShips);
+    p2.fleet = buildShipObjects(nrOfShips);
 
     const gameDiv = document.getElementById("game");
     gameDiv.innerHTML = "";
@@ -23,12 +22,10 @@ function gamePlay() {
     const playButton = createPlayButton();
     gameDiv.appendChild(playButton);
 
-    // selectMode();
-
     function startRound(nr) {
         let player, enemyPlayer;
-        if (nr % 2 === 0) player = player1, enemyPlayer = player2;
-        else player = player2, enemyPlayer = player1;
+        if (nr % 2 === 0) player = p1, enemyPlayer = p2;
+        else player = p2, enemyPlayer = p1;
         nr++;
 
         const container1 = document.getElementById("first");
@@ -42,76 +39,83 @@ function gamePlay() {
             container1.classList.remove("hide");
         }
 
-        const enemyBoard = [...gameDiv.querySelectorAll(".hide .square")];
         const enemyBoard1 = gameDiv.querySelector(".hide .board");
 
-        enemyBoard1.addEventListener("click", clicked)
+        enemyBoard1.addEventListener("click", shotsFired);
 
-        function clicked(e) {
+        function shotsFired(e) {
             if (e.target === e.currentTarget) return;
             const square = e.target.closest(".square");
             const coodrs = square.dataset.coords.split("").map(el => Number(el));
-            const attackAnswer = enemyPlayer.board.receiveAttack(...coodrs)
+            const attackResponse = enemyPlayer.board.receiveAttack(...coodrs)
 
-            if (attackAnswer === "Already been shot") return;
-            else if (typeof (attackAnswer) === "object") {
-                const shotShipImg = document.createElement("img");
-                shotShipImg.src = crackImg;
-                shotShipImg.style.transform = `rotate(${360 / Math.floor(Math.random() * 4 + 1)}deg)`;
-
-                square.appendChild(shotShipImg);
-                square.classList.add("shot");
-
-                // Update ship status if ship is sunk;
-                if (attackAnswer.isSunk()) {
-                    const shipLength = attackAnswer.length;
-                    let shipNr;
-                    if (shipLength === 5) shipNr = 5;
-                    else if (shipLength === 4) shipNr = 4;
-                    else if (shipLength === 3) {
-                        shipNr = 2;
-                        if (document.querySelector(`.hide .S${shipNr}.sunk`)) shipNr++;
-                    }
-                    else shipNr = 1;
-                    const shipStatus = document.querySelector(`.hide .S${shipNr}`);
-                    console.log(shipStatus);
-                    console.log(attackAnswer.length)
-                    shipStatus.classList.add("sunk");
+            if (attackResponse === "Already been shot") return;
+            else if (typeof (attackResponse) === "object") {
+                drawEnemyShot(square);
+                if (attackResponse.isSunk()) {
+                    updateStatusBoard(attackResponse);
                 }
             } else {
-                const hole = document.createElement("div");
-                square.appendChild(hole);
-
-                setTimeout(() => hole.classList.add("explode"), 5);
+                drawMissedShot(square);
             }
 
-            enemyBoard1.removeEventListener("click", clicked);
-            startRound(nr);
+            enemyBoard1.removeEventListener("click", shotsFired);
+
+            if (enemyPlayer.board.allShipsDown(...enemyPlayer.fleet)) {
+                endGame();
+            } else {
+                setTimeout(()=>startRound(nr),50);
+            }
+        }
+    endGame()
+        function endGame() {
+            //Draw a table and write "Game Over, Player So so won" edhe button play again;
+            console.log(`Ovaa ${enemyPlayer.turn} lost`);
+
+            const container = document.createElement("div");
+            const message = document.createElement("h1");
+            const playAgainBtn = document.createElement("button");
+
+            container.classList.add("game-over");
+            message.textContent = `Player 1 Won!`;
+            playAgainBtn.textContent = "Play again";
+
+            container.appendChild(message);
+            container.appendChild(playAgainBtn);
+
+            gameDiv.appendChild(container);
         }
 
+        function updateStatusBoard(ship) {
+            const shipLength = ship.length;
+            let shipNr;
 
-        // enemyBoard.forEach(square => {
-        //     square.onclick = (e)=>{ 
-        //         console.log(e)
-        //         console.log(e.target.dataset)
-        //         console.log(e.target.dataset.coords)
-        //         const coodrs = e.target.dataset.coords.split("").map(el => Number(el));
-        //         // console.log(coodrs)
-        //         console.log(enemyPlayer.board.receiveAttack(...coodrs));
-        //         const shotShipImg = document.createElement("img");
+            if (shipLength === 5) shipNr = 5;
+            else if (shipLength === 4) shipNr = 4;
+            else if (shipLength === 3) {
+                shipNr = 2;
+                if (document.querySelector(`.hide .S${shipNr}.sunk`)) shipNr++;
+            } else shipNr = 1;
 
-        //         shotShipImg.src = crackImg;
-        //         shotShipImg.style.transform = `rotate(${360/Math.floor(Math.random()*4+1)}deg)`;
-        //         e.target.appendChild(shotShipImg);
+            const shipStatus = document.querySelector(`.hide .S${shipNr}`);
+            shipStatus.classList.add("sunk");
+        };
 
-        //         enemyBoard.forEach(square => square.onclick = null);
+        function drawEnemyShot(boardSquare) {
+            const shotShipImg = document.createElement("img");
+            shotShipImg.src = crackImg;
+            shotShipImg.style.transform = `rotate(${360 / Math.floor(Math.random() * 4 + 1)}deg)`;
 
-        //         startRound(nr);
-        //     }
-        // })
+            boardSquare.appendChild(shotShipImg);
+            boardSquare.classList.add("shot");
+        }
 
-        // after shot
-        if (enemyPlayer.board.allShipsDown()) return "finito";
+        function drawMissedShot(boardSquare) {
+            const hole = document.createElement("div");
+            boardSquare.appendChild(hole);
+
+            setTimeout(() => hole.classList.add("explode"), 5);
+        }
     }
 
     function drawShips(coords, board) {
@@ -165,11 +169,11 @@ function gamePlay() {
         const container = document.createElement("div");
         const shipStatusCont = document.createElement("div");
         const ships = [];
-        for (let i = 0; i < shipObjects1.length; i++) {
+        for (let i = 0; i < p1.fleet.length; i++) {
             const ship = document.createElement("div");
             ship.classList.add(`S${i + 1}`);
 
-            for (let j = 0; j < shipObjects1[i].length; j++) {
+            for (let j = 0; j < p1.fleet[i].length; j++) {
                 const bodyPart = document.createElement("div");
                 ship.appendChild(bodyPart);
             }
@@ -192,22 +196,22 @@ function gamePlay() {
 
     function startGame() {
         gameDiv.innerHTML = "";
-        player1.type = "human";
-        player2.type = "human";
+        p1.type = "human";
+        p2.type = "human";
 
-        gameDiv.appendChild(buildStage(player1));
-        gameDiv.appendChild(buildStage(player2));
+        gameDiv.appendChild(buildStage(p1));
+        gameDiv.appendChild(buildStage(p2));
 
         const dom_board1 = [...document.querySelectorAll(".board")[0].childNodes];
         const dom_board2 = [...document.querySelectorAll(".board")[1].childNodes];
 
-        for (let i = 0; i < shipObjects1.length; i++) {
-            const coords = placeShipsRandomly(shipObjects1[i], player1.board);
+        for (let i = 0; i < p1.fleet.length; i++) {
+            const coords = placeShipsRandomly(p1.fleet[i], p1.board);
             drawShips(coords, dom_board1);
         }
 
-        for (let i = 0; i < shipObjects2.length; i++) {
-            const coords = placeShipsRandomly(shipObjects2[i], player2.board);
+        for (let i = 0; i < p2.fleet.length; i++) {
+            const coords = placeShipsRandomly(p2.fleet[i], p2.board);
             drawShips(coords, dom_board2);
         }
 
@@ -235,8 +239,8 @@ function gamePlay() {
                 if (e.target.textContent === "2 Player") {
                     startGame()
                 } else {
-                    player1.type = "human";
-                    player2.type = "computer";
+                    p1.type = "human";
+                    p2.type = "computer";
                     gameDiv.innerHTML = "";
                 };
             }

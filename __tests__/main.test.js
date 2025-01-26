@@ -104,6 +104,8 @@ test("Report whether or not all of their ships have been sunk", () => {
     const cajkovski = new game.Ship(3)
     const kafka = new game.Ship(3)
 
+    expect(gameBoard.allShipsDown()).toBe(false);
+    
     expect(gameBoard.allShipsDown(liburna, cajkovski, kafka)).toBe(false);
 
     //pleace three ships on board

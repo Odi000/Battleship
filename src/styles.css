@@ -24,6 +24,8 @@
     --square-hover-clr: #00465D;
     --ship-clr: #007d6b;
     --ship-hover-clr: #005B4E;
+    --btn-bkg-clr: #4d4637;
+    --btn-font-clr: #b99400;
 }
 
 body {
@@ -37,8 +39,8 @@ body {
 
 button {
     font-size: 5.6rem;
-    background-color: #4d4637;
-    color: #b99400;
+    background-color: var(--btn-bkg-clr);
+    color: var(--btn-font-clr);
     padding: 0.2rem 1.6rem;
     border-radius: 0.2rem;
     border-top: 0.4rem solid rgba(255, 255, 255, 0.3);
@@ -62,8 +64,6 @@ button:active {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 8rem;
-    background-color: #4d4637;
-    color: #b99400;
     padding: 0.2rem 1.6rem;
 }
 
@@ -187,4 +187,40 @@ div+.container {
 div.explode {
     scale: 1;
     border-radius: 0px;
+}
+
+/* Endgame */
+
+.game-over {
+    position: absolute;
+    width: 34rem;
+    height: 22rem;
+    background-color: var(--btn-bkg-clr);
+    border: #927814 1rem ridge;
+}
+
+.game-over
+h1 {
+    font-size: 7.4rem;
+    font-weight: 400;
+    /* color: #f9f871; */
+    color: var();
+    width: fit-content;
+    margin: .6rem auto 2rem;
+    text-shadow: .2rem .2rem #927814,
+    -.2rem -.2rem #927814,
+    -.2rem .2rem #927814,
+    .2rem -.2rem #927814;
+}
+
+.game-over
+button {
+    /* color: #f9f871; */
+    margin: 0 auto;
+    display: block;
+    text-shadow: .1rem .1rem black,
+    -.1rem -.1rem black,
+    -.1rem .1rem black,
+    .1rem -.1rem black;
+    /* border: #927814 .4rem outset; */
 }

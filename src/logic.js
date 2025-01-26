@@ -143,6 +143,7 @@ class GameBoard {
     };
 
     allShipsDown(...ships) {
+        if(!ships.length) return false;
         let sunkenShips = 0;
         for (let ship of ships) {
             if (ship.isSunk()) sunkenShips++;
@@ -158,6 +159,7 @@ class Player {
         this.type = null;
         this.turn = turn
         this.board = new GameBoard();
+        this.fleet = null;
     }
 }
 
