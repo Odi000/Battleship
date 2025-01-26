@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Jersey+10&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap');
+
 @font-face {
     font-family: "mini-pixel";
     src: url(./fonts/mini-pixel-7.regular.woff2),
@@ -130,7 +134,7 @@ div+.container {
     height: 1.2rem;
 }
 
-.sunk > div {
+.sunk>div {
     background-color: #8B0000;
 }
 
@@ -194,33 +198,42 @@ div.explode {
 .game-over {
     position: absolute;
     width: 34rem;
-    height: 22rem;
+    height: 20rem;
     background-color: var(--btn-bkg-clr);
     border: #927814 1rem ridge;
+    top: -20rem;
+    transition: top 800ms;
 }
 
-.game-over
-h1 {
-    font-size: 7.4rem;
+.game-over.descent {
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.game-over h1 {
+    font-family: "Doto";
+    font-size: 3.8rem;
     font-weight: 400;
-    /* color: #f9f871; */
-    color: var();
+    color: #f9f871;
     width: fit-content;
-    margin: .6rem auto 2rem;
-    text-shadow: .2rem .2rem #927814,
-    -.2rem -.2rem #927814,
-    -.2rem .2rem #927814,
-    .2rem -.2rem #927814;
+    padding-left: 1rem;
+    margin: 2.2rem auto 2rem;
+    text-shadow:
+        .1rem .1rem #927814,
+        -.1rem -.1rem #927814,
+        -.1rem .1rem #927814,
+        .1rem -.1rem #927814,
+        .1rem .1rem .6rem #927814,
+        -.1rem -.1rem .6rem #927814,
+        -.1rem .1rem .6rem #927814,
+        .1rem -.1rem .6rem #927814;
 }
 
-.game-over
-button {
-    /* color: #f9f871; */
+.game-over button {
     margin: 0 auto;
     display: block;
     text-shadow: .1rem .1rem black,
-    -.1rem -.1rem black,
-    -.1rem .1rem black,
-    .1rem -.1rem black;
-    /* border: #927814 .4rem outset; */
+        -.1rem -.1rem black,
+        -.1rem .1rem black,
+        .1rem -.1rem black;
 }
