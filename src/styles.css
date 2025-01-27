@@ -34,6 +34,7 @@
 
 body {
     background-color: var(--bkg-clr);
+    position: relative;
 }
 
 #game {
@@ -202,12 +203,13 @@ div.explode {
     background-color: var(--btn-bkg-clr);
     border: #927814 1rem ridge;
     top: -20rem;
+    left: 50%;
     transition: top 800ms;
 }
 
 .game-over.descent {
     top: 50%;
-    transform: translateY(-50%);
+    transform: translate(-50%,-50%);
 }
 
 .game-over h1 {

@@ -16,8 +16,11 @@ function gamePlay() {
     p1.fleet = buildShipObjects(nrOfShips);
     p2.fleet = buildShipObjects(nrOfShips);
 
-    const gameDiv = document.getElementById("game");
-    gameDiv.innerHTML = "";
+    document.body.innerHTML = "";
+    const gameDiv = document.createElement("div");
+    gameDiv.id = "game";
+    document.body.appendChild(gameDiv);
+
 
     const playButton = createPlayButton();
     gameDiv.appendChild(playButton);
@@ -64,26 +67,27 @@ function gamePlay() {
             if (enemyPlayer.board.allShipsDown(...enemyPlayer.fleet)) {
                 endGame();
             } else {
-                setTimeout(()=>startRound(nr),50);
+                setTimeout(() => startRound(nr), 50);
             }
         }
-    endGame()
+        
         function endGame() {
-            //Draw a table and write "Game Over, Player So so won" edhe button play again;
-            console.log(`Ovaa ${enemyPlayer.turn} lost`);
-
             const container = document.createElement("div");
             const message = document.createElement("h1");
             const playAgainBtn = document.createElement("button");
+            const winner = player.turn==="first"?"1":"2";
 
             container.classList.add("game-over");
-            message.textContent = `Player 1 Won!`;
+            message.textContent = `Player ${winner} Won!`;
             playAgainBtn.textContent = "Play again";
+            playAgainBtn.onclick = gamePlay;
 
             container.appendChild(message);
             container.appendChild(playAgainBtn);
 
-            gameDiv.appendChild(container);
+            document.body.appendChild(container);
+
+            setTimeout(() => container.classList.add("descent"), 100);
         }
 
         function updateStatusBoard(ship) {
