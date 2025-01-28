@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Jersey+10&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap');
 
 @font-face {
@@ -83,6 +83,7 @@ button:active {
     grid-column: 1/3;
     grid-template-columns: 2fr 2fr;
     gap: 4.6rem 3.6rem;
+    transition: opacity 400ms;
 }
 
 .select-mode>h1 {
@@ -163,11 +164,19 @@ div+.container {
     background-color: var(--square-hover-clr);
 }
 
-.container:not(.hide) .ship {
+.container:not(.hide):not(.computer) .ship {
     background-color: var(--ship-clr);
 }
 
-.container:not(.hide) .ship:hover {
+.container:not(.hide):not(.computer) .ship:hover {
+    background-color: var(--ship-hover-clr);
+}
+
+.human .ship {
+    background-color: var(--ship-clr);
+}
+
+.human .ship:hover {
     background-color: var(--ship-hover-clr);
 }
 
@@ -194,6 +203,30 @@ div.explode {
     border-radius: 0px;
 }
 
+/* Turn */
+
+#turn {
+    position: absolute;
+    color: white;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#turn > *{
+    font-family: "Manrope";
+}
+
+#turn h1 {
+font-size: 3.2rem;
+}
+
+#turn p{
+    width: fit-content;
+    margin: 0 auto;
+    font-size: 1.8rem;
+}
+
 /* Endgame */
 
 .game-over {
@@ -209,7 +242,7 @@ div.explode {
 
 .game-over.descent {
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
 .game-over h1 {

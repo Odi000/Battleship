@@ -1,7 +1,8 @@
 import {
     Ship,
     GameBoard,
-    Player
+    Player,
+    CPU
 } from "./logic";
 import "./styles.css";
 import crackImg from "./images/cracked.png"
@@ -31,6 +32,10 @@ function gamePlay() {
         else player = p2, enemyPlayer = p1;
         nr++;
 
+        //---round info
+        showTurnInfo()
+        //---
+
         const container1 = document.getElementById("first");
         const container2 = document.getElementById("second");
 
@@ -44,7 +49,72 @@ function gamePlay() {
 
         const enemyBoard1 = gameDiv.querySelector(".hide .board");
 
-        enemyBoard1.addEventListener("click", shotsFired);
+        if (player.type === "human") {
+            enemyBoard1.addEventListener("click", shotsFired);
+        } else {
+            const computer = new CPU();
+           setTimeout(()=> computersTurn(computer),600) ;
+        }
+
+        function getWhoseTurn() {
+            if (player.type === "computer") {
+                return "CPU";
+            } else {
+                if (player.turn === "first") {
+                    return "Player 1";
+                } else {
+                    return "Player 2"
+                }
+            }
+        }
+
+        function showTurnInfo() {
+            const existing = document.getElementById("turn");
+            if (existing) {
+                // existing.remove();
+                const p = existing.querySelector("p");
+                p.textContent = getWhoseTurn();
+                return
+            }
+
+            const turnOf = document.createElement("div");
+            const h1 = document.createElement("h1");
+            const para = document.createElement("p");
+
+            h1.textContent = "Turn:";
+            para.textContent = getWhoseTurn();
+
+            turnOf.appendChild(h1);
+            turnOf.appendChild(para);
+            turnOf.id = "turn";
+            document.body.appendChild(turnOf);
+
+        }
+
+        function computersTurn(computer) {
+            const attackCoords = computer.attack()
+            const attackResponse = enemyPlayer.board.receiveAttack(...attackCoords);
+
+            if (attackResponse === "Already been shot") return computersTurn(computer);
+
+            const square = document.querySelector(
+                `.hide [data-coords="${attackCoords.join("")}"]`
+            )
+
+            //  Use of setTimeout to not
+            // make the game seem so instant
+
+            if (typeof (attackResponse) === "object") {
+                drawEnemyShot(square);
+                if (attackResponse.isSunk()) {
+                    updateStatusBoard(attackResponse);
+                }
+            } else {
+                drawMissedShot(square);
+            }
+
+            checkIfGameEnded();
+        }
 
         function shotsFired(e) {
             if (e.target === e.currentTarget) return;
@@ -64,23 +134,32 @@ function gamePlay() {
 
             enemyBoard1.removeEventListener("click", shotsFired);
 
+            checkIfGameEnded();
+        }
+
+        function checkIfGameEnded() {
             if (enemyPlayer.board.allShipsDown(...enemyPlayer.fleet)) {
                 endGame();
             } else {
                 setTimeout(() => startRound(nr), 50);
             }
         }
-        
+
         function endGame() {
             const container = document.createElement("div");
             const message = document.createElement("h1");
             const playAgainBtn = document.createElement("button");
-            const winner = player.turn==="first"?"1":"2";
+            const winner = player.turn === "first" ? "1" : "2";
 
             container.classList.add("game-over");
-            message.textContent = `Player ${winner} Won!`;
             playAgainBtn.textContent = "Play again";
             playAgainBtn.onclick = gamePlay;
+
+            if (winner === "2" && p2.type === "computer") {
+                message.textContent = "Computer Won!"
+            } else {
+                message.textContent = `Player ${winner} Won!`;
+            }
 
             container.appendChild(message);
             container.appendChild(playAgainBtn);
@@ -118,7 +197,7 @@ function gamePlay() {
             const hole = document.createElement("div");
             boardSquare.appendChild(hole);
 
-            setTimeout(() => hole.classList.add("explode"), 5);
+            setTimeout(() => hole.classList.add("explode"), 10);
         }
     }
 
@@ -149,7 +228,6 @@ function gamePlay() {
             squares.push(square);
             board.appendChild(square);
         }
-
         board.classList.add("board");
         return board;
     }
@@ -187,7 +265,12 @@ function gamePlay() {
 
         if (player.turn === "first") container.id = "first";
         else container.id = "second";
+        if (player.type === "computer") {
+            container.classList.add("computer");
+            document.getElementById("first").classList.add("human");
+        }
         container.classList.add("container");
+
         shipStatusCont.classList.add("ships");
 
         ships.forEach(ship => shipStatusCont.appendChild(ship));
@@ -198,10 +281,10 @@ function gamePlay() {
         return container;
     }
 
-    function startGame() {
+    function startGame(p1Type, p2Type) {
         gameDiv.innerHTML = "";
-        p1.type = "human";
-        p2.type = "human";
+        p1.type = p1Type;
+        p2.type = p2Type;
 
         gameDiv.appendChild(buildStage(p1));
         gameDiv.appendChild(buildStage(p2));
@@ -234,20 +317,24 @@ function gamePlay() {
 
         containerDiv.classList.add("select-mode");
 
-        _2player.ontransitionend = (e) => {
-            if (e.propertyName === "border-bottom-color") {
-                _2player.classList.add("dissapear");
+        containerDiv.onclick = (e) => {
+            if (e.target.textContent === "2 Player") {
+                containerDiv.ontransitionend = e => manageTransition(e, "human", "human");
+
+            };
+            if (e.target.textContent === "CPU") {
+                containerDiv.ontransitionend = e => manageTransition(e, "human", "computer");
+            }
+        }
+
+        function manageTransition(event, p1Type, p2Type) {
+            if (event.propertyName === "border-bottom-color") {
                 containerDiv.classList.add("dissapear");
+            };
+            if (event.propertyName === "opacity") {
+                startGame(p1Type, p2Type);
             }
-            if (e.propertyName === "opacity") {
-                if (e.target.textContent === "2 Player") {
-                    startGame()
-                } else {
-                    p1.type = "human";
-                    p2.type = "computer";
-                    gameDiv.innerHTML = "";
-                };
-            }
+
         }
 
         containerDiv.appendChild(heading);

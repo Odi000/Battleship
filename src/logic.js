@@ -143,7 +143,7 @@ class GameBoard {
     };
 
     allShipsDown(...ships) {
-        if(!ships.length) return false;
+        if (!ships.length) return false;
         let sunkenShips = 0;
         for (let ship of ships) {
             if (ship.isSunk()) sunkenShips++;
@@ -163,8 +163,20 @@ class Player {
     }
 }
 
+class CPU {
+    constructor() {
+        this.turn;
+    }
+    attack() {
+        const x = Math.floor(Math.random() * 10);
+        const y = Math.floor(Math.random() * 10);
+        return [x, y];
+    }
+}
+
 module.exports = {
     Ship,
     GameBoard,
     Player,
+    CPU
 };
